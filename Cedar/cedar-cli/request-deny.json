@@ -1,0 +1,8 @@
+{
+    "principal": "Recube::MyApp::User::\"alice\"",
+    "action": "Recube::MyApp::Action::\"updateBike\"",
+    "resource": "Recube::MyApp::Bike::\"bike-001\"" ,
+    "context": {
+        "ip_address": "127.0.0.1"
+    }
+}

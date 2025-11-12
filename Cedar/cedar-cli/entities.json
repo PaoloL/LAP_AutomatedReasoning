@@ -6,7 +6,7 @@
         "Surname": "latella"
       },
       "parents": [
-        { "type": "Recube::MyApp::Viewers", "id": "admins-group" }
+        { "type": "Recube::MyApp::Roles", "id": "Admin" }
       ]
     },
     {
@@ -16,7 +16,7 @@
           "Surname": "latella"
         },
         "parents": [
-        { "type": "Recube::MyApp::Viewers", "id": "viewers-group" }
+        { "type": "Recube::MyApp::Roles", "id": "Viewer" }
       ]
       },
     {

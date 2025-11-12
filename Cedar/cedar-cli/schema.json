@@ -2,7 +2,7 @@
   "Recube::MyApp": {
     "entityTypes": {
       "User": {
-        "memberOfTypes": ["Viewers", "Admins"],
+        "memberOfTypes": ["Roles"],
         "shape": {
           "type": "Record",
           "attributes": {
@@ -18,9 +18,7 @@
           }
         }
       },
-      "Viewers": {
-      },
-      "Admins": {
+      "Roles": {
       },
       "Bike": {
         "shape": {

@@ -1,0 +1,85 @@
+{
+  "Recube::MyApp": {
+    "entityTypes": {
+      "User": {
+        "memberOfTypes": ["Viewers", "Admins"],
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "id": { 
+                "type": "String" 
+            },
+            "Name": { 
+                "type": "String" 
+            },
+            "Surname": { 
+                "type": "String" 
+            }
+          }
+        }
+      },
+      "Viewers": {
+      },
+      "Admins": {
+      },
+      "Bike": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "brand": { 
+                "type": "String" 
+            },
+            "model": { 
+                "type": "String" 
+            },
+            "pricing": { 
+                "type": "Long" 
+            }
+          }
+        }
+      },
+      "Car": {
+        "shape": {
+          "type": "Record",
+          "attributes": {
+            "brand": { 
+                "type": "String" 
+            },
+            "model": { 
+                "type": "String" 
+            },
+            "pricing": { 
+                "type": "Long" 
+            }
+          }
+        }
+      }
+    },
+    "actions": {
+      "getBike": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["Bike"]
+        }
+      },
+      "createBike": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["Bike"]
+        }
+      },
+       "getCars": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["Car"]
+        }
+      },
+      "createCars": {
+        "appliesTo": {
+          "principalTypes": ["User"],
+          "resourceTypes": ["Car"]
+        }
+      }
+    }
+  }
+}

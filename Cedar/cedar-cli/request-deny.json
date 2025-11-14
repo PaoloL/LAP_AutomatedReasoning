@@ -1,7 +1,7 @@
 {
-    "principal": "Recube::MyApp::User::\"alice\"",
-    "action": "Recube::MyApp::Action::\"updateBike\"",
-    "resource": "Recube::MyApp::Bike::\"bike-001\"" ,
+    "principal": "Recube::MyApp::User::\"uid-124\"",
+    "action": "Recube::MyApp::Action::\"createBike\"",
+    "resource": "Recube::MyApp::Bike::\"vin-123\"" ,
     "context": {
         "ip_address": "127.0.0.1"
     }

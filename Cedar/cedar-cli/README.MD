@@ -29,7 +29,7 @@ The following commands are available using the Cedar CLI:
 ## Example 1. **Validate Policies Against Schema**
 
 ```bash
-cedar validate --schema app.schema --policies policy.cedar
+cedar validate  --schema-format json --schema schema.json --policies policy.cedar
 ```
 
 ## Example 2. **Authorize Request Against Policies**

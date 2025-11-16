@@ -108,7 +108,7 @@ Resources:
       Cors:
         AllowMethods: '''*'''
         AllowHeaders: '''*'''
-        AllowOrigin: '''http://localhost:3000'''
+        AllowOrigin: '''*'''
       DefinitionBody:
         openapi: 3.0.1
         info:
@@ -139,10 +139,6 @@ Resources:
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 uri:
                   Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CallbackFunction.Arn}/invocations
@@ -151,31 +147,6 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
-            options:
-              responses:
-                '200':
-                  description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Methods:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Headers:
-                      schema:
-                        type: string
-              x-amazon-apigateway-integration:
-                type: mock
-                responses:
-                  default:
-                    statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: '''GET,OPTIONS'''
-                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
           /bikes:
             get:
               responses:

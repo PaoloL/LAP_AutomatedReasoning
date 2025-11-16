@@ -2,6 +2,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: Root stack for the Automated Reasoning Demo with AVP, Cognito, and API
   Gateway
+Parameters:
+  ExistingUserPoolArn:
+    Type: String
+    Description: ARN of existing Cognito User Pool
+    Default: ''
+  ExistingUserPoolId:
+    Type: String
+    Description: ID of existing Cognito User Pool
+    Default: ''
+  ExistingUserPoolClientId:
+    Type: String
+    Description: ID of existing Cognito User Pool Client
+    Default: ''
+Conditions:
+  CreateCognito:
+    Fn::Equals:
+    - Ref: ExistingUserPoolId
+    - ''
 Resources:
   AvpStack:
     Type: AWS::Serverless::Application
@@ -26,6 +44,7 @@ Resources:
       SamResourceId: AvpStack
   CognitoStack:
     Type: AWS::Serverless::Application
+    Condition: CreateCognito
     Properties:
       Location: CognitoStack/template.yaml
     Metadata:

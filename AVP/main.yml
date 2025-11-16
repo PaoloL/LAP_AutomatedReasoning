@@ -9,6 +9,11 @@ Resources:
     Type: AWS::Serverless::Application
     Properties:
       Location: ./avp.yml
+      Parameters:
+        CognitoUserPoolArn: !GetAtt CognitoStack.Outputs.UserPoolArn
+        CognitoClientId: !GetAtt CognitoStack.Outputs.UserPoolClientId
+    DependsOn:
+      - CognitoStack
       
   # --- 2. Cognito Stack ---
   # Deploys Cognito User Pool, Client, and Roles Group for authentication.

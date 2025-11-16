@@ -38,6 +38,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - 'verifiedpermissions:IsAuthorized'
+                  - 'verifiedpermissions:IsAuthorizedWithToken'
                 # Use the ARN passed in as a parameter
                 Resource: !Ref AvpPolicyStoreArn
 

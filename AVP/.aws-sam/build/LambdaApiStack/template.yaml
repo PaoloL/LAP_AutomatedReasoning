@@ -35,6 +35,7 @@ Resources:
           - Effect: Allow
             Action:
             - verifiedpermissions:IsAuthorized
+            - verifiedpermissions:IsAuthorizedWithToken
             Resource:
               Ref: AvpPolicyStoreArn
   ApiGatewayAuthorizerRole:
@@ -104,6 +105,10 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: prd
+      Cors:
+        AllowMethods: '''*'''
+        AllowHeaders: '''*'''
+        AllowOrigin: '''http://localhost:3000'''
       DefinitionBody:
         openapi: 3.0.1
         info:
@@ -176,10 +181,6 @@ Resources:
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -187,18 +188,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             post:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -206,40 +201,11 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
-            options:
-              responses:
-                '200':
-                  description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Methods:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Headers:
-                      schema:
-                        type: string
-              x-amazon-apigateway-integration:
-                type: mock
-                responses:
-                  default:
-                    statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: '''GET,POST,OPTIONS'''
-                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
           /bike/{bikeId}:
             get:
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -247,18 +213,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             put:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -266,18 +226,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             delete:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -285,40 +239,11 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
-            options:
-              responses:
-                '200':
-                  description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Methods:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Headers:
-                      schema:
-                        type: string
-              x-amazon-apigateway-integration:
-                type: mock
-                responses:
-                  default:
-                    statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: '''GET,PUT,DELETE,OPTIONS'''
-                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
           /cars:
             get:
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -326,18 +251,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             post:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -345,40 +264,11 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
-            options:
-              responses:
-                '200':
-                  description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Methods:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Headers:
-                      schema:
-                        type: string
-              x-amazon-apigateway-integration:
-                type: mock
-                responses:
-                  default:
-                    statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: '''GET,POST,OPTIONS'''
-                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
           /car/{carId}:
             get:
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -386,18 +276,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             put:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -405,18 +289,12 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
             delete:
               security:
               - LambdaAuthorizer: []
               responses:
                 '200':
                   description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
               x-amazon-apigateway-integration:
                 type: mock
                 requestTemplates:
@@ -424,31 +302,6 @@ Resources:
                 responses:
                   default:
                     statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
-            options:
-              responses:
-                '200':
-                  description: 200 response
-                  headers:
-                    Access-Control-Allow-Origin:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Methods:
-                      schema:
-                        type: string
-                    Access-Control-Allow-Headers:
-                      schema:
-                        type: string
-              x-amazon-apigateway-integration:
-                type: mock
-                responses:
-                  default:
-                    statusCode: '200'
-                    responseParameters:
-                      method.response.header.Access-Control-Allow-Methods: '''GET,PUT,DELETE,OPTIONS'''
-                      method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-                      method.response.header.Access-Control-Allow-Origin: '''http://localhost:3000'''
   CallbackFunctionPermission:
     Type: AWS::Lambda::Permission
     Properties:

@@ -1,6 +1,14 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Nested Stack for Amazon Verified Permissions (AVP) resources'
 
+Parameters:
+  CognitoUserPoolArn:
+    Type: String
+    Description: 'ARN of the Cognito User Pool'
+  CognitoClientId:
+    Type: String
+    Description: 'Cognito User Pool Client ID'
+
 Resources:
   MyPolicyStore:
     Type: AWS::VerifiedPermissions::PolicyStore
@@ -65,6 +73,19 @@ Resources:
                 action,
                 resource
             );
+
+  IdentitySource:
+    Type: AWS::VerifiedPermissions::IdentitySource
+    Properties:
+      PolicyStoreId: !Ref MyPolicyStore
+      Configuration:
+        CognitoUserPoolConfiguration:
+          UserPoolArn: !Ref CognitoUserPoolArn
+          ClientIds:
+            - !Ref CognitoClientId
+          GroupConfiguration:
+            GroupEntityType: "Recube::MyApp::Roles"
+      PrincipalEntityType: "Recube::MyApp::User"
 
 Outputs:
   PolicyStoreId:

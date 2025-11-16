@@ -7,6 +7,17 @@ Resources:
     Type: AWS::Serverless::Application
     Properties:
       Location: AvpStack/template.yaml
+      Parameters:
+        CognitoUserPoolArn:
+          Fn::GetAtt:
+          - CognitoStack
+          - Outputs.UserPoolArn
+        CognitoClientId:
+          Fn::GetAtt:
+          - CognitoStack
+          - Outputs.UserPoolClientId
+    DependsOn:
+    - CognitoStack
     Metadata:
       SamResourceId: AvpStack
   CognitoStack:

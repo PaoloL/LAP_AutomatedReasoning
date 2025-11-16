@@ -8,6 +8,9 @@ Parameters:
   CognitoClientId:
     Type: String
     Description: 'Cognito User Pool Client ID'
+  CognitoUserPoolId:
+    Type: String
+    Description: 'Cognito User Pool ID'
 
 Resources:
   MyPolicyStore:
@@ -27,16 +30,34 @@ Resources:
                   "Car": {}
                 },
                 "actions": {
-                  "getBike": {
+                  "get /bikes": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
                   },
-                  "getCars": {
+                  "post /bikes": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "get /cars": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   },
-                  "createBike": {
+                  "post /cars": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+                  },
+                  "get /bike/{bikeId}": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
                   },
-                  "createCars": {
+                  "put /bike/{bikeId}": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "delete /bike/{bikeId}": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "get /car/{carId}": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+                  },
+                  "put /car/{carId}": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+                  },
+                  "delete /car/{carId}": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   }
                 }
@@ -50,12 +71,14 @@ Resources:
       Definition:
         Static:
           Description: "Allow Viewers to getBike and getCars"
-          Statement: |
+          Statement: !Sub |
             permit (
-                principal in Recube::MyApp::Roles::"viewers",
+                principal in Recube::MyApp::Roles::"${CognitoUserPoolId}|viewers",
                 action in [
-                    Recube::MyApp::Action::"getBike", 
-                    Recube::MyApp::Action::"getCars"
+                    Recube::MyApp::Action::"get /bikes",
+                    Recube::MyApp::Action::"get /bike/{bikeId}",
+                    Recube::MyApp::Action::"get /cars",
+                    Recube::MyApp::Action::"get /car/{carId}"
                 ],
                 resource
             );
@@ -67,9 +90,9 @@ Resources:
       Definition:
         Static:
           Description: "Allow Admins to perform all actions"
-          Statement: |
+          Statement: !Sub |
             permit (
-                principal in Recube::MyApp::Roles::"admins",
+                principal in Recube::MyApp::Roles::"${CognitoUserPoolId}|admins",
                 action,
                 resource
             );

@@ -7,6 +7,9 @@ Parameters:
   CognitoClientId:
     Type: String
     Description: Cognito User Pool Client ID
+  CognitoUserPoolId:
+    Type: String
+    Description: Cognito User Pool ID
 Resources:
   MyPolicyStore:
     Type: AWS::VerifiedPermissions::PolicyStore
@@ -18,13 +21,25 @@ Resources:
         CedarJson:
           Fn::Sub: "{\n  \"Recube::MyApp\": {\n    \"entityTypes\": {\n      \"User\"\
             : { \"memberOfTypes\": [\"Roles\"] },\n      \"Roles\": {},\n      \"\
-            Bike\": {},\n      \"Car\": {}\n    },\n    \"actions\": {\n      \"getBike\"\
+            Bike\": {},\n      \"Car\": {}\n    },\n    \"actions\": {\n      \"get\
+            \ /bikes\": {\n        \"appliesTo\": { \"principalTypes\": [\"User\"\
+            ,\"Roles\"], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"post /bikes\"\
             : {\n        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"\
-            ], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"getCars\": {\n \
-            \       \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"\
-            resourceTypes\": [\"Car\"] }\n      },\n      \"createBike\": {\n    \
+            ], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"get /cars\": {\n\
+            \        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"\
+            resourceTypes\": [\"Car\"] }\n      },\n      \"post /cars\": {\n    \
             \    \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\"\
-            : [\"Bike\"] }\n      },\n      \"createCars\": {\n        \"appliesTo\"\
+            : [\"Car\"] }\n      },\n      \"get /bike/{bikeId}\": {\n        \"appliesTo\"\
+            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
+            ] }\n      },\n      \"put /bike/{bikeId}\": {\n        \"appliesTo\"\
+            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
+            ] }\n      },\n      \"delete /bike/{bikeId}\": {\n        \"appliesTo\"\
+            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
+            ] }\n      },\n      \"get /car/{carId}\": {\n        \"appliesTo\": {\
+            \ \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
+            ] }\n      },\n      \"put /car/{carId}\": {\n        \"appliesTo\": {\
+            \ \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
+            ] }\n      },\n      \"delete /car/{carId}\": {\n        \"appliesTo\"\
             : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
             ] }\n      }\n    }\n  }\n}\n"
   ViewersPolicy:
@@ -35,9 +50,12 @@ Resources:
       Definition:
         Static:
           Description: Allow Viewers to getBike and getCars
-          Statement: "permit (\n    principal in Recube::MyApp::Roles::\"viewers\"\
-            ,\n    action in [\n        Recube::MyApp::Action::\"getBike\", \n   \
-            \     Recube::MyApp::Action::\"getCars\"\n    ],\n    resource\n);\n"
+          Statement:
+            Fn::Sub: "permit (\n    principal in Recube::MyApp::Roles::\"${CognitoUserPoolId}|viewers\"\
+              ,\n    action in [\n        Recube::MyApp::Action::\"get /bikes\",\n\
+              \        Recube::MyApp::Action::\"get /bike/{bikeId}\",\n        Recube::MyApp::Action::\"\
+              get /cars\",\n        Recube::MyApp::Action::\"get /car/{carId}\"\n\
+              \    ],\n    resource\n);\n"
   AdminsPolicy:
     Type: AWS::VerifiedPermissions::Policy
     Properties:
@@ -46,8 +64,9 @@ Resources:
       Definition:
         Static:
           Description: Allow Admins to perform all actions
-          Statement: "permit (\n    principal in Recube::MyApp::Roles::\"admins\"\
-            ,\n    action,\n    resource\n);\n"
+          Statement:
+            Fn::Sub: "permit (\n    principal in Recube::MyApp::Roles::\"${CognitoUserPoolId}|admins\"\
+              ,\n    action,\n    resource\n);\n"
   IdentitySource:
     Type: AWS::VerifiedPermissions::IdentitySource
     Properties:

@@ -2,6 +2,23 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: 'Root stack for the Automated Reasoning Demo with AVP, Cognito, and API Gateway'
 
+Parameters:
+  ExistingUserPoolArn:
+    Type: String
+    Description: ARN of existing Cognito User Pool
+    Default: ""
+  ExistingUserPoolId:
+    Type: String
+    Description: ID of existing Cognito User Pool
+    Default: ""
+  ExistingUserPoolClientId:
+    Type: String
+    Description: ID of existing Cognito User Pool Client
+    Default: ""
+
+Conditions:
+  CreateCognito: !Equals [!Ref ExistingUserPoolId, ""]
+
 Resources:
   # --- 1. AVP Stack ---
   # Deploys the Policy Store, Schema, and Policies for Cedar authorization.
@@ -12,6 +29,7 @@ Resources:
       Parameters:
         CognitoUserPoolArn: !GetAtt CognitoStack.Outputs.UserPoolArn
         CognitoClientId: !GetAtt CognitoStack.Outputs.UserPoolClientId
+        CognitoUserPoolId: !GetAtt CognitoStack.Outputs.UserPoolId
     DependsOn:
       - CognitoStack
       
@@ -19,6 +37,8 @@ Resources:
   # Deploys Cognito User Pool, Client, and Roles Group for authentication.
   CognitoStack:
     Type: AWS::Serverless::Application
+    Condition: CreateCognito
+    DeletionPolicy: Retain
     Properties:
       Location: ./cognito.yml
       

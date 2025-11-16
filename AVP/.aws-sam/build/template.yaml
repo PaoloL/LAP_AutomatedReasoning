@@ -16,6 +16,10 @@ Resources:
           Fn::GetAtt:
           - CognitoStack
           - Outputs.UserPoolClientId
+        CognitoUserPoolId:
+          Fn::GetAtt:
+          - CognitoStack
+          - Outputs.UserPoolId
     DependsOn:
     - CognitoStack
     Metadata:

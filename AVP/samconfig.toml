@@ -1,0 +1,10 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "AutomatedReasoningDemo"
+s3_bucket = "ccmd-lambda-code"
+s3_prefix = "automated_reasoning_demo"
+region = "eu-west-1"
+profile = "AWSAdministratorAccess-767828734903"
+capabilities = ["CAPABILITY_IAM", "CAPABILITY_AUTO_EXPAND"]
+template_file = "main.yml"
+image_repositories = []

@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: 'Root stack for the Automated Reasoning Demo with AVP, Cognito, and API Gateway'
+
+Resources:
+  # --- 1. AVP Stack ---
+  # Deploys the Policy Store, Schema, and Policies for Cedar authorization.
+  AvpStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./avp.yml
+      
+  # --- 2. Cognito Stack ---
+  # Deploys Cognito User Pool, Client, and Roles Group for authentication.
+  CognitoStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./cognito.yml
+      
+  # --- 3. Lambda & API Stack ---
+  # Deploys Functions, IAM Role, and API.
+  # It depends on the AVP stack to get its outputs.
+  LambdaApiStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: ./lambda.yml
+      Parameters:
+        # Pass the outputs from AvpStack as parameters
+        AvpPolicyStoreArn: !GetAtt AvpStack.Outputs.PolicyStoreArn
+        AvpPolicyStoreId: !GetAtt AvpStack.Outputs.PolicyStoreId
+    DependsOn:
+      - AvpStack
+      
+Outputs:
+  ApiGatewayUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !GetAtt LambdaApiStack.Outputs.ApiGatewayUrl
+  PolicyStoreId:
+    Description: "AVP Policy Store ID"
+    Value: !GetAtt AvpStack.Outputs.PolicyStoreId
+  UserPoolId:
+    Description: "Cognito User Pool ID"
+    Value: !GetAtt CognitoStack.Outputs.UserPoolId
+  UserPoolClientId:
+    Description: "Cognito User Pool Client ID"
+    Value: !GetAtt CognitoStack.Outputs.UserPoolClientId

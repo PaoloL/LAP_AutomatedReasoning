@@ -1,5 +1,6 @@
 # Cedar CLI 
 
+
 ## Files Structure
 
 The project contains several files:

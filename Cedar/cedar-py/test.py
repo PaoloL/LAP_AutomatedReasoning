@@ -1,33 +1,54 @@
 from cedarpy import is_authorized, AuthzResult, Decision
+import json
 
-# Policies: These define the rules for authorization.
+# Load schema from JSON file
+with open('schema.json', 'r') as f:
+    my_schema = json.load(f)
+schema = my_schema
+
+# Load entities from JSON file
+with open('entities.json', 'r') as f:
+    my_entities = json.load(f)
+entities = my_entities
+
+# Define Policies: These define the rules for authorization.
 policies: str = """
-permit(
-    principal == User::"bob",
-    action == Action::"view",
-    resource == Photo::"1234-abcd"
+permit (
+    principal in Recube::MyApp::Roles::"Viewer",
+    action in [Recube::MyApp::Action::"getBike", Recube::MyApp::Action::"getCars"],
+    resource
+);
+
+// Grant all access to members of the "Admins" group
+permit (
+    principal in Recube::MyApp::Roles::"Admin",
+    action,
+    resource
 );
 """
 
-# Entities: These represent the principals, resources, and actions in your system.
-entities: list = [  # a list of Cedar entities; can also be a json-formatted string of Cedar entities
-    {"uid": {"__entity": { "type" : "User", "id" : "alice" }}, "attrs": {}, "parents": []}
-    # ...
-]
-
-# Request: This defines the specific authorization request being made.
-request = {
-    "principal": 'User::"bob"',
-    "action": 'Action::"view"',
-    "resource": 'Photo::"1234-abcd"',
-    "context": {} # Context: Additional data about the request that can be used in policies.
+# Define Request: This defines the specific authorization request being made.
+denied_request = {
+    "principal": "Recube::MyApp::User::\"uid-124\"",
+    "action": "Recube::MyApp::Action::\"createBike\"",
+    "resource": "Recube::MyApp::Bike::\"vin-123\"" ,
+    "context": {
+        "ip_address": "127.0.0.1"
+    }
 }
 
-# Schema: the schema defines the types and relationships of entities and attributes, and is used for validation.
-schema = my_schema
+allowed_request = {
+    "principal": "Recube::MyApp::User::\"uid-123\"",
+    "action": "Recube::MyApp::Action::\"createBike\"",
+    "resource": "Recube::MyApp::Bike::\"vin-123\"" ,
+    "context": {
+        "ip_address": "127.0.0.1"
+    }
+}
+request = allowed_request
+# Evaluate the Request against Policy
+authz_result: AuthzResult = is_authorized(allowed_request, policies, entities, schema)
 
-
-authz_result: AuthzResult = is_authorized(request, policies, entities, my_schema)
-
-assert authz_result['allowed']
-print(authz_result['decision'])
+if  authz_result['allowed']:
+    print("Authorization Allowed")
+else: print("Authorization Denied")

@@ -1,0 +1,59 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Root stack for the Automated Reasoning Demo with AVP, Cognito, and API
+  Gateway
+Resources:
+  AvpStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: AvpStack/template.yaml
+    Metadata:
+      SamResourceId: AvpStack
+  CognitoStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: CognitoStack/template.yaml
+    Metadata:
+      SamResourceId: CognitoStack
+  LambdaApiStack:
+    Type: AWS::Serverless::Application
+    Properties:
+      Location: LambdaApiStack/template.yaml
+      Parameters:
+        AvpPolicyStoreArn:
+          Fn::GetAtt:
+          - AvpStack
+          - Outputs.PolicyStoreArn
+        AvpPolicyStoreId:
+          Fn::GetAtt:
+          - AvpStack
+          - Outputs.PolicyStoreId
+    DependsOn:
+    - AvpStack
+    Metadata:
+      SamResourceId: LambdaApiStack
+Outputs:
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value:
+      Fn::GetAtt:
+      - LambdaApiStack
+      - Outputs.ApiGatewayUrl
+  PolicyStoreId:
+    Description: AVP Policy Store ID
+    Value:
+      Fn::GetAtt:
+      - AvpStack
+      - Outputs.PolicyStoreId
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value:
+      Fn::GetAtt:
+      - CognitoStack
+      - Outputs.UserPoolId
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value:
+      Fn::GetAtt:
+      - CognitoStack
+      - Outputs.UserPoolClientId

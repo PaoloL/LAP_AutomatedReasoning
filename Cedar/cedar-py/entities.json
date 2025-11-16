@@ -1,0 +1,33 @@
+
+[
+    {
+      "uid": { "type": "Recube::MyApp::User", "id": "uid-123" },
+      "attrs": {
+        "Name": "paolo",
+        "Surname": "latella"
+      },
+      "parents": [
+        { "type": "Recube::MyApp::Roles", "id": "Admin" }
+      ]
+    },
+    {
+        "uid": { "type": "Recube::MyApp::User", "id": "uid-124" },
+        "attrs": {
+          "Name": "paolo",
+          "Surname": "latella"
+        },
+        "parents": [
+        { "type": "Recube::MyApp::Roles", "id": "Viewer" }
+      ]
+      },
+    {
+      "uid": { "type": "Recube::MyApp::Bike", "id": "vin-123" },
+      "attrs": {
+        "brand": "Yamaha",
+        "model": "FZ8",
+        "pricing": 8500
+      },
+      "parents": []
+    }
+  ]
+  

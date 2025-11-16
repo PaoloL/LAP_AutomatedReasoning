@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Nested Stack for Amazon Verified Permissions (AVP) resources'
+
+Resources:
+  MyPolicyStore:
+    Type: AWS::VerifiedPermissions::PolicyStore
+    Properties:
+      Description: "Policy store for the Recube::MyApp application"
+      ValidationSettings:
+        Mode: STRICT
+      Schema:
+        CedarJson: !Sub |
+            {
+              "Recube::MyApp": {
+                "entityTypes": {
+                  "User": { "memberOfTypes": ["Roles"] },
+                  "Roles": {},
+                  "Bike": {},
+                  "Car": {}
+                },
+                "actions": {
+                  "getBike": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "getCars": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+                  },
+                  "createBike": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "createCars": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+                  }
+                }
+              }
+            }
+  
+  ViewersPolicy:
+    Type: AWS::VerifiedPermissions::Policy
+    Properties:
+      PolicyStoreId: !Ref MyPolicyStore
+      Definition:
+        Static:
+          Description: "Allow Viewers to getBike and getCars"
+          Statement: |
+            permit (
+                principal in Recube::MyApp::Roles::"viewers",
+                action in [
+                    Recube::MyApp::Action::"getBike", 
+                    Recube::MyApp::Action::"getCars"
+                ],
+                resource
+            );
+
+  AdminsPolicy:
+    Type: AWS::VerifiedPermissions::Policy
+    Properties:
+      PolicyStoreId: !Ref MyPolicyStore
+      Definition:
+        Static:
+          Description: "Allow Admins to perform all actions"
+          Statement: |
+            permit (
+                principal in Recube::MyApp::Roles::"admins",
+                action,
+                resource
+            );
+
+Outputs:
+  PolicyStoreId:
+    Description: "The ID of the AVP Policy Store"
+    Value: !GetAtt MyPolicyStore.PolicyStoreId
+  PolicyStoreArn:
+    Description: "The ARN of the AVP Policy Store"
+    Value: !GetAtt MyPolicyStore.Arn

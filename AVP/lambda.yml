@@ -1,0 +1,320 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: 'Nested Stack for Lambda Functions, IAM Role, and API Gateway'
+
+Parameters:
+  AvpPolicyStoreArn:
+    Type: String
+    Description: 'ARN of the AVP Policy Store (from avp.yml)'
+  AvpPolicyStoreId:
+    Type: String
+    Description: 'ID of the AVP Policy Store (from avp.yml)'
+
+Globals:
+  Function:
+    Timeout: 3
+    MemorySize: 128
+
+Resources:
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Policies:
+        - PolicyName: AllowAvpIsAuthorized
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'verifiedpermissions:IsAuthorized'
+                # Use the ARN passed in as a parameter
+                Resource: !Ref AvpPolicyStoreArn
+
+  ApiGatewayAuthorizerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: InvokeLambdaAuthorizer
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                Resource: !GetAtt AuthorizeFunction.Arn
+
+  CallbackFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: AutomatedReasoning_Callback
+      Handler: 'callback.lambda_handler'
+      Role: !GetAtt LambdaExecutionRole.Arn
+      CodeUri: src/callback/
+      Runtime: python3.13
+      Timeout: 30
+      Environment:
+        Variables:
+          LANGUAGE_CODE: it-IT
+  
+  AuthorizeFunction:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: AutomatedReasoning_Authorize
+      Handler: 'authorize.lambda_handler'
+      Role: !GetAtt LambdaExecutionRole.Arn
+      CodeUri: src/authorize/
+      Runtime: python3.13
+      Timeout: 30
+      Environment:
+        Variables:
+          LANGUAGE_CODE: it-IT
+          POLICY_STORE_ID: !Ref AvpPolicyStoreId
+          NAMESPACE: "Recube::MyApp"
+          TOKEN_TYPE: "accessToken"
+          ENDPOINT: ""
+
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prd
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'http://localhost:3000'"
+      DefinitionBody:
+        openapi: "3.0.1"
+        info:
+          title: "Automated Reasoning Demo"
+          description: "This project demonstrates how to use Cedar in Amazon Verified Permission"
+          version: "2025-06-30T21:33:44Z"
+        components:
+          securitySchemes:
+            LambdaAuthorizer:
+              type: apiKey
+              name: Authorization
+              in: header
+              x-amazon-apigateway-authtype: custom
+              x-amazon-apigateway-authorizer:
+                type: request
+                authorizerUri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${AuthorizeFunction.Arn}/invocations"
+                authorizerCredentials: !GetAtt ApiGatewayAuthorizerRole.Arn
+                authorizerResultTtlInSeconds: 120
+                identitySource: "method.request.header.Authorization,context.httpMethod,context.path"
+        paths:
+          /callback:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      schema:
+                        type: string
+              x-amazon-apigateway-integration:
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${CallbackFunction.Arn}/invocations"
+                httpMethod: POST
+                type: aws_proxy
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Origin: "'http://localhost:3000'"
+            options:
+              responses:
+                "200":
+                  description: "200 response"
+                  headers:
+                    Access-Control-Allow-Origin:
+                      schema:
+                        type: string
+                    Access-Control-Allow-Methods:
+                      schema:
+                        type: string
+                    Access-Control-Allow-Headers:
+                      schema:
+                        type: string
+              x-amazon-apigateway-integration:
+                type: mock
+                responses:
+                  default:
+                    statusCode: "200"
+                    responseParameters:
+                      method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+                      method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+                      method.response.header.Access-Control-Allow-Origin: "'http://localhost:3000'"
+          /bikes:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            post:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+          /bike/{bikeId}:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            put:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            delete:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+          /cars:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            post:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+          /car/{carId}:
+            get:
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            put:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+            delete:
+              security:
+                - LambdaAuthorizer: []
+              responses:
+                "200":
+                  description: "200 response"
+              x-amazon-apigateway-integration:
+                type: mock
+                requestTemplates:
+                  application/json: '{"statusCode": 200}'
+                responses:
+                  default:
+                    statusCode: "200"
+
+  CallbackFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref CallbackFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/*"
+
+  AuthorizeFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref AuthorizeFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*/*"
+
+Outputs:
+  CallbackFunctionArn:
+    Description: "Callback Lambda Function ARN"
+    Value: !GetAtt CallbackFunction.Arn
+  AuthorizeFunctionArn:
+    Description: "Authorize Lambda Function ARN"
+    Value: !GetAtt AuthorizeFunction.Arn
+  FunctionIamRoleArn:
+    Description: "Implicit IAM Role created for function"
+    Value: !GetAtt LambdaExecutionRole.Arn
+  ApiGatewayUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/prd/"

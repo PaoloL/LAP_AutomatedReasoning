@@ -1,0 +1,56 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Nested Stack for Amazon Verified Permissions (AVP) resources
+Resources:
+  MyPolicyStore:
+    Type: AWS::VerifiedPermissions::PolicyStore
+    Properties:
+      Description: Policy store for the Recube::MyApp application
+      ValidationSettings:
+        Mode: STRICT
+      Schema:
+        CedarJson:
+          Fn::Sub: "{\n  \"Recube::MyApp\": {\n    \"entityTypes\": {\n      \"User\"\
+            : { \"memberOfTypes\": [\"Roles\"] },\n      \"Roles\": {},\n      \"\
+            Bike\": {},\n      \"Car\": {}\n    },\n    \"actions\": {\n      \"getBike\"\
+            : {\n        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"\
+            ], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"getCars\": {\n \
+            \       \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"\
+            resourceTypes\": [\"Car\"] }\n      },\n      \"createBike\": {\n    \
+            \    \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\"\
+            : [\"Bike\"] }\n      },\n      \"createCars\": {\n        \"appliesTo\"\
+            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
+            ] }\n      }\n    }\n  }\n}\n"
+  ViewersPolicy:
+    Type: AWS::VerifiedPermissions::Policy
+    Properties:
+      PolicyStoreId:
+        Ref: MyPolicyStore
+      Definition:
+        Static:
+          Description: Allow Viewers to getBike and getCars
+          Statement: "permit (\n    principal in Recube::MyApp::Roles::\"viewers\"\
+            ,\n    action in [\n        Recube::MyApp::Action::\"getBike\", \n   \
+            \     Recube::MyApp::Action::\"getCars\"\n    ],\n    resource\n);\n"
+  AdminsPolicy:
+    Type: AWS::VerifiedPermissions::Policy
+    Properties:
+      PolicyStoreId:
+        Ref: MyPolicyStore
+      Definition:
+        Static:
+          Description: Allow Admins to perform all actions
+          Statement: "permit (\n    principal in Recube::MyApp::Roles::\"admins\"\
+            ,\n    action,\n    resource\n);\n"
+Outputs:
+  PolicyStoreId:
+    Description: The ID of the AVP Policy Store
+    Value:
+      Fn::GetAtt:
+      - MyPolicyStore
+      - PolicyStoreId
+  PolicyStoreArn:
+    Description: The ARN of the AVP Policy Store
+    Value:
+      Fn::GetAtt:
+      - MyPolicyStore
+      - Arn

@@ -1,4 +1,4 @@
-.aws-sam/
+AVP/.aws-sam/
 venv/
 *.so
 __pycache__/

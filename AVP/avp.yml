@@ -30,34 +30,34 @@ Resources:
                   "Car": {}
                 },
                 "actions": {
-                  "get /bikes": {
+                  "getAllBikes": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
                   },
-                  "post /bikes": {
+                  "createBike": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
                   },
-                  "get /cars": {
+                  "getBike": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "updateBike": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "deleteBike": {
+                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+                  },
+                  "getAllCars": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   },
-                  "post /cars": {
+                  "createCar": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   },
-                  "get /bike/{bikeId}": {
-                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
-                  },
-                  "put /bike/{bikeId}": {
-                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
-                  },
-                  "delete /bike/{bikeId}": {
-                    "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
-                  },
-                  "get /car/{carId}": {
+                  "getCar": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   },
-                  "put /car/{carId}": {
+                  "updateCar": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   },
-                  "delete /car/{carId}": {
+                  "deleteCar": {
                     "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
                   }
                 }
@@ -75,10 +75,10 @@ Resources:
             permit (
                 principal in Recube::MyApp::Roles::"${CognitoUserPoolId}|viewers",
                 action in [
-                    Recube::MyApp::Action::"get /bikes",
-                    Recube::MyApp::Action::"get /bike/{bikeId}",
-                    Recube::MyApp::Action::"get /cars",
-                    Recube::MyApp::Action::"get /car/{carId}"
+                    Recube::MyApp::Action::"getAllBikes",
+                    Recube::MyApp::Action::"getBike",
+                    Recube::MyApp::Action::"getAllCars",
+                    Recube::MyApp::Action::"getCar"
                 ],
                 resource
             );

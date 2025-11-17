@@ -21,27 +21,26 @@ Resources:
         CedarJson:
           Fn::Sub: "{\n  \"Recube::MyApp\": {\n    \"entityTypes\": {\n      \"User\"\
             : { \"memberOfTypes\": [\"Roles\"] },\n      \"Roles\": {},\n      \"\
-            Bike\": {},\n      \"Car\": {}\n    },\n    \"actions\": {\n      \"get\
-            \ /bikes\": {\n        \"appliesTo\": { \"principalTypes\": [\"User\"\
-            ,\"Roles\"], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"post /bikes\"\
+            Bike\": {},\n      \"Car\": {}\n    },\n    \"actions\": {\n      \"getAllBikes\"\
             : {\n        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"\
-            ], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"get /cars\": {\n\
+            ], \"resourceTypes\": [\"Bike\"] }\n      },\n      \"createBike\": {\n\
             \        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"\
-            resourceTypes\": [\"Car\"] }\n      },\n      \"post /cars\": {\n    \
-            \    \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\"\
-            : [\"Car\"] }\n      },\n      \"get /bike/{bikeId}\": {\n        \"appliesTo\"\
+            resourceTypes\": [\"Bike\"] }\n      },\n      \"getBike\": {\n      \
+            \  \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\"\
+            : [\"Bike\"] }\n      },\n      \"updateBike\": {\n        \"appliesTo\"\
             : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
-            ] }\n      },\n      \"put /bike/{bikeId}\": {\n        \"appliesTo\"\
-            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
-            ] }\n      },\n      \"delete /bike/{bikeId}\": {\n        \"appliesTo\"\
-            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"\
-            ] }\n      },\n      \"get /car/{carId}\": {\n        \"appliesTo\": {\
-            \ \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
-            ] }\n      },\n      \"put /car/{carId}\": {\n        \"appliesTo\": {\
-            \ \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
-            ] }\n      },\n      \"delete /car/{carId}\": {\n        \"appliesTo\"\
-            : { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\": [\"Car\"\
-            ] }\n      }\n    }\n  }\n}\n"
+            ] }\n      },\n      \"deleteBike\": {\n        \"appliesTo\": { \"principalTypes\"\
+            : [\"User\",\"Roles\"], \"resourceTypes\": [\"Bike\"] }\n      },\n  \
+            \    \"getAllCars\": {\n        \"appliesTo\": { \"principalTypes\": [\"\
+            User\",\"Roles\"], \"resourceTypes\": [\"Car\"] }\n      },\n      \"\
+            createCar\": {\n        \"appliesTo\": { \"principalTypes\": [\"User\"\
+            ,\"Roles\"], \"resourceTypes\": [\"Car\"] }\n      },\n      \"getCar\"\
+            : {\n        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"\
+            ], \"resourceTypes\": [\"Car\"] }\n      },\n      \"updateCar\": {\n\
+            \        \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"\
+            resourceTypes\": [\"Car\"] }\n      },\n      \"deleteCar\": {\n     \
+            \   \"appliesTo\": { \"principalTypes\": [\"User\",\"Roles\"], \"resourceTypes\"\
+            : [\"Car\"] }\n      }\n    }\n  }\n}\n"
   ViewersPolicy:
     Type: AWS::VerifiedPermissions::Policy
     Properties:
@@ -52,10 +51,10 @@ Resources:
           Description: Allow Viewers to getBike and getCars
           Statement:
             Fn::Sub: "permit (\n    principal in Recube::MyApp::Roles::\"${CognitoUserPoolId}|viewers\"\
-              ,\n    action in [\n        Recube::MyApp::Action::\"get /bikes\",\n\
-              \        Recube::MyApp::Action::\"get /bike/{bikeId}\",\n        Recube::MyApp::Action::\"\
-              get /cars\",\n        Recube::MyApp::Action::\"get /car/{carId}\"\n\
-              \    ],\n    resource\n);\n"
+              ,\n    action in [\n        Recube::MyApp::Action::\"getAllBikes\",\n\
+              \        Recube::MyApp::Action::\"getBike\",\n        Recube::MyApp::Action::\"\
+              getAllCars\",\n        Recube::MyApp::Action::\"getCar\"\n    ],\n \
+              \   resource\n);\n"
   AdminsPolicy:
     Type: AWS::VerifiedPermissions::Policy
     Properties:

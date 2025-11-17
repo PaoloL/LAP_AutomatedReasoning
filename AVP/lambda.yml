@@ -81,7 +81,7 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: AutomatedReasoning_Authorize
-      Handler: 'authorize.lambda_handler'
+      Handler: 'authorizer.lambda_handler'
       Role: !GetAtt LambdaExecutionRole.Arn
       CodeUri: src/authorize/
       Runtime: python3.13

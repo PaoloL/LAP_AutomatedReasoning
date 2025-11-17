@@ -83,7 +83,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: AutomatedReasoning_Authorize
-      Handler: authorize.lambda_handler
+      Handler: authorizer.lambda_handler
       Role:
         Fn::GetAtt:
         - LambdaExecutionRole

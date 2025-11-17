@@ -56,25 +56,25 @@
     "actions": {
       "getBike": {
         "appliesTo": {
-          "principalTypes": ["User"],
+          "principalTypes": ["Roles"],
           "resourceTypes": ["Bike"]
         }
       },
       "createBike": {
         "appliesTo": {
-          "principalTypes": ["User"],
+          "principalTypes": ["Roles"],
           "resourceTypes": ["Bike"]
         }
       },
-       "getCars": {
+       "getCar": {
         "appliesTo": {
-          "principalTypes": ["User"],
+          "principalTypes": ["Roles"],
           "resourceTypes": ["Car"]
         }
       },
-      "createCars": {
+      "createCar": {
         "appliesTo": {
-          "principalTypes": ["User"],
+          "principalTypes": ["Roles"],
           "resourceTypes": ["Car"]
         }
       }

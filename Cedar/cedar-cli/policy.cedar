@@ -3,7 +3,7 @@
 // Grant read access to members of the "Viewers" group
 permit (
     principal in Recube::MyApp::Roles::"Viewer",
-    action in [Recube::MyApp::Action::"getBike", Recube::MyApp::Action::"getCars"],
+    action in [Recube::MyApp::Action::"getBike", Recube::MyApp::Action::"getCar"],
     resource
 );
 

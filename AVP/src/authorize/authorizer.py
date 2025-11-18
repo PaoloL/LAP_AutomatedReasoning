@@ -31,7 +31,6 @@ def parse_token(token):
 def getIdentityToken(event):
     """Extract token from request"""
     headers = event.get("headers", {})
-    print(f"DEBUG: Headers: {headers}")
     
     bearer_token = headers.get("authorization") or headers.get("Authorization")
     print(f"DEBUG: Bearer token found: {bool(bearer_token)}")
@@ -43,6 +42,11 @@ def getIdentityToken(event):
     if not bearer_token:
         print("DEBUG: No bearer token found")
         raise Exception("Missing bearer token")
+    
+    # Parse token to extract sub and cognito:groups
+    parsed_token = parse_token(bearer_token)
+    print(f"DEBUG: Token sub: {parsed_token.get('sub')}")
+    print(f"DEBUG: Token cognito:groups: {parsed_token.get('cognito:groups')}")
     
     return bearer_token
 
@@ -96,7 +100,7 @@ def callAVP(identity_token, action_id, resource_type, entity_id):
             "entityId": entity_id
         }
     }
-    print(f"DEBUG: Auth input: {json.dumps(auth_input, default=str)}")
+    print(f"DEBUG: Create Cedar Authorization Request: {json.dumps(auth_input, default=str)}")
 
     # Call Verified Permissions
     print("DEBUG: Calling Verified Permissions API...")
@@ -112,9 +116,10 @@ def callAVP(identity_token, action_id, resource_type, entity_id):
     return effect
 
 def lambda_handler(event, context):
-    print(f"DEBUG: Received event: {json.dumps(event, default=str)}")
+    event_str = json.dumps(event, default=str)
     print(f"DEBUG: Environment - POLICY_STORE_ID: {POLICY_STORE_ID}")
     print(f"DEBUG: Environment - NAMESPACE: {NAMESPACE}")
+    print(f"DEBUG: Received event (first 350 chars) : {event_str[:350]}...")
     
     try:
         # Extract components using helper functions
@@ -128,7 +133,7 @@ def lambda_handler(event, context):
         # Parse token for principal ID
         parsed_token = parse_token(identity_token)
         principal_id = f"{parsed_token['iss'].split('/')[-1]}|{parsed_token['sub']}"
-        print(f"DEBUG: Principal ID: {principal_id}")
+        print(f"DEBUG: Return {effect.upper} policy for Principal ID: {principal_id}")
 
         return {
             "principalId": principal_id,
@@ -152,7 +157,8 @@ def lambda_handler(event, context):
         print(f"DEBUG: Error type: {type(e).__name__}")
         import traceback
         print(f"DEBUG: Traceback: {traceback.format_exc()}")
-        
+        print(f"DEBUG: Return DENY policy for Principal ID: {principal_id}")
+
         return {
             "principalId": "error",
             "policyDocument": {

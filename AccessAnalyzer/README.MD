@@ -1,3 +1,21 @@
+#### 1. Check Access Not Granted
+Checks whether specific actions (e.g., `s3:DeleteBucket`) are allowed by a policy.
+* **Scenario A (Pass):** Verifies that a restrictive policy *does not* grant sensitive permissions.
+* **Scenario B (Fail):** Verifies that a permissive policy *does* grant access to `s3:GetObject`.
+
+#### 2. Check No New Access
+Compares an existing policy with an updated version to ensure no new permissions were inadvertently added.
+* **Expected Output:** `FAIL` (The example demonstrates detecting a permission escalation).
+
+#### 3. Check No Public Access
+Analyzes a resource policy (like an S3 bucket policy) to determine if it allows public access.
+* **Expected Output:** `FAIL` (The example policy grants public access).
+
+#### 4. Validate Policy
+Checks the policy document against IAM policy grammar and best practices.
+* **Expected Output:** Returns findings/warnings (e.g., "Using Allow with NotPrincipal can be overly permissive").
+
+
 # Check Access Not Granted
 
 ## Descriptiopn

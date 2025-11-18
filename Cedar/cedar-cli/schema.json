@@ -53,30 +53,37 @@
         }
       }
     },
-    "actions": {
-      "getBike": {
-        "appliesTo": {
-          "principalTypes": ["Roles"],
-          "resourceTypes": ["Bike"]
-        }
+    "actions": 
+    {
+      "getAllBikes": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
       },
       "createBike": {
-        "appliesTo": {
-          "principalTypes": ["Roles"],
-          "resourceTypes": ["Bike"]
-        }
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
       },
-       "getCar": {
-        "appliesTo": {
-          "principalTypes": ["Roles"],
-          "resourceTypes": ["Car"]
-        }
+      "getBike": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+      },
+      "updateBike": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+      },
+      "deleteBike": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Bike"] }
+      },
+      "getAllCars": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
       },
       "createCar": {
-        "appliesTo": {
-          "principalTypes": ["Roles"],
-          "resourceTypes": ["Car"]
-        }
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+      },
+      "getCar": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+      },
+      "updateCar": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
+      },
+      "deleteCar": {
+        "appliesTo": { "principalTypes": ["User","Roles"], "resourceTypes": ["Car"] }
       }
     }
   }

@@ -9,6 +9,7 @@ This workshop guides you through using automated reasoning tools available in th
 1.  **AWS IAM Access Analyzer:** Validating Identity and Resource policies using AWS CLI.
 2.  **Cedar Policy Language:** Writing and verifying authorization policies using the Cedar CLI.
 3.  **Amazon Verified Permissions:** Building and deploying Cedar-based authorization systems with AWS services integration.
+4.  **Amazon Bedrock Guardrails:** Implementing AI safety controls using automated reasoning for content filtering.
 
 ## Prerequisites
 
@@ -64,6 +65,12 @@ In this section, you will deploy a complete authorization system using Amazon Ve
 
 **Working Directory:** `LAP_AutomatedReasoning/AVP/`
 
+### Part 4: Amazon Bedrock Guardrails
+
+In this section, you will explore Amazon Bedrock's automated reasoning capabilities through Guardrails, demonstrating how AI safety controls work with and without content filtering.
+
+**Working Directory:** `LAP_AutomatedReasoning/Bedrock/`
+
 ## Repository Structure
 
 The logic relies on the files cloned from `PaoloL/LAP_AutomatedReasoning`. The structure used in this workshop is:
@@ -83,17 +90,21 @@ LAP_AutomatedReasoning/
 │       ├── entities.json
 │       ├── request-deny.json
 │       └── request-allow.json
-└── AVP/
-    ├── src/
-    │   ├── authorize/
-    │   │   ├── authorizer.py
-    │   │   └── requirements.txt
-    │   └── callback/
-    │       ├── callback.py
-    │       └── requirements.txt
-    ├── avp.yml
-    ├── cognito.yml
-    ├── lambda.yml
-    ├── main.yml
-    ├── README.MD
-    └── samconfig.toml
+├── AVP/
+│   ├── src/
+│   │   ├── authorize/
+│   │   │   ├── authorizer.py
+│   │   │   └── requirements.txt
+│   │   └── callback/
+│   │       ├── callback.py
+│   │       └── requirements.txt
+│   ├── avp.yml
+│   ├── cognito.yml
+│   ├── lambda.yml
+│   ├── main.yml
+│   ├── README.MD
+│   └── samconfig.toml
+└── Bedrock/
+    ├── travel_assistant.py
+    ├── requirements.txt
+    └── README.MD

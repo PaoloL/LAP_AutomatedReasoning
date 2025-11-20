@@ -1,19 +1,30 @@
-#### 1. Check Access Not Granted
-Checks whether specific actions (e.g., `s3:DeleteBucket`) are allowed by a policy.
-* **Scenario A (Pass):** Verifies that a restrictive policy *does not* grant sensitive permissions.
-* **Scenario B (Fail):** Verifies that a permissive policy *does* grant access to `s3:GetObject`.
+# AWS IAM Access Analyzer Demo
 
-#### 2. Check No New Access
-Compares an existing policy with an updated version to ensure no new permissions were inadvertently added.
-* **Expected Output:** `FAIL` (The example demonstrates detecting a permission escalation).
+## Overview
 
-#### 3. Check No Public Access
-Analyzes a resource policy (like an S3 bucket policy) to determine if it allows public access.
-* **Expected Output:** `FAIL` (The example policy grants public access).
+This demo showcases AWS IAM Access Analyzer's automated reasoning capabilities for validating IAM policies using mathematical proof. Access Analyzer helps ensure your policies follow security best practices and don't grant unintended permissions.
 
-#### 4. Validate Policy
-Checks the policy document against IAM policy grammar and best practices.
-* **Expected Output:** Returns findings/warnings (e.g., "Using Allow with NotPrincipal can be overly permissive").
+## Setup
+
+### Prerequisites
+- AWS CLI configured with appropriate permissions
+- Access to `accessanalyzer` commands in your AWS account
+
+### Demo Files
+This directory contains policy documents for testing different Access Analyzer features:
+- `check_access_not_granted_policy.json` - Policy for testing access restrictions
+- `check_no_new_access_existing_policy.json` - Original policy for comparison
+- `check_no_new_access_updated_policy.json` - Updated policy for comparison
+- `check_no_public_access_policy.json` - S3 bucket policy for public access testing
+- `validate_policy_document.json` - Policy document for validation testing
+
+## Demo Scenarios
+
+### 1. Check Access Not Granted
+Verifies that specific actions are NOT allowed by a policy.
+
+**Scenario A (Pass):** Restrictive policy denies sensitive permissions
+**Scenario B (Fail):** Permissive policy allows access to resources
 
 
 # Check Access Not Granted
@@ -112,5 +123,14 @@ https://docs.aws.amazon.com/cli/latest/reference/accessanalyzer/get-generated-po
 ## Example
 (TBD)
 
-# Other IAM Access Analyzer examples using AWS CLI
-https://docs.aws.amazon.com/code-library/latest/ug/cli_2_accessanalyzer_code_examples.html
+## Key Takeaways
+
+- **Automated Policy Validation:** Access Analyzer uses mathematical reasoning to prove policy behavior without manual testing
+- **Security Best Practices:** Identifies overly permissive policies and potential security risks
+- **Policy Comparison:** Detects permission escalations when comparing policy versions
+- **Public Access Detection:** Automatically identifies policies that grant public access to resources
+- **Proactive Security:** Validates policies before deployment to prevent security misconfigurations
+
+## Additional Resources
+- [AWS CLI Access Analyzer Examples](https://docs.aws.amazon.com/code-library/latest/ug/cli_2_accessanalyzer_code_examples.html)
+- [Access Analyzer Policy Validation](https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-policy-validation.html)
